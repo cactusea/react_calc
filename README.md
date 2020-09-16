@@ -1,68 +1,33 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 리액트로 만드는 계산기 프로젝트
 
-## Available Scripts
+## 할 일 목록
 
-In the project directory, you can run:
+[ ] 연산자 클릭했을 때 앞전 숫자 유지하기  
+[ ] . 버튼 클릭시 소수 만들기  
+[ ] ac / c 기능 구현  
+* click 이벤트 생성  
+* All Clear / Clear 이벤트 각각 구현  
 
-### `yarn start`
+[ ] +/- 버튼 클릭시 양수/음수 변환  
+[ ] % 버튼 클릭시 백분율 적융  
+[ ] 공학용/프로그래밍용 버튼 클릭시 타입별 화면 구현  
+[ ] keydown  
+* number key
+* backspace
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+[ ] 계산이 완료된 후 =(equal) 버튼을 반복해서 클릭할 경우에 대한 구현  
+  * 직전 수식을 반복하여 적용한다.  
+  * ex) 5-3*4=-7 입력 후 = 버튼 추가 클릭  
+  1) -7 * -4 = -28   
+  2) -28 * -4 = -112 ...  
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+[ ] 검색 결과 숫자 자리수가 너무 긴 경우  
+  * ex) 63+5/9 = 63.55555555555556
+  -> 최대 글자수 지정
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## 완료된 목록
+[x] 숫자키 입력시 계산기 결과 화면에 숫자 뿌리기 
+[x] = 눌렀을 때 계산 실행  
+[x] 계산 숫자 여러개 눌렀을 때도 가능하기 (ex 50+20*2)  
