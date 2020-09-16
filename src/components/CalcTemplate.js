@@ -1,18 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useReducer } from 'react';
 import './CalcStyle.scss';
 
 const numberArray = [];
 const signArray   = [];
+
+
 const CalcTemplate = ({typeKeypads}) => {
+
+  function reducer(state, action){
+    switch (action.type){
+      case 'MATHEX': 
+        return { mathEx: mathEx.current } 
+      default: console.log('etc'); return state;
+    }
+  }
 
   const [inputNum, setInputNum] = useState(0); //현재 클릭한 숫자 버튼의 값
   const [resultNum, setResultNum] = useState('0'); //현재 입력중인 숫자 값
-  const [mathEx, setMathEx] = useState(null); //입력중인 수식
-  const totalMathEx = useRef('');
+  const mathEx = useRef(''); //입력중인 수식
+  const [state, dispatch] = useReducer(reducer, {
+    mathEx: ''
+  });
 
-  useEffect(()=>{
-    setMathEx(totalMathEx.current);
-  },[totalMathEx.current]);
+  // useEffect(()=>{
+  //   setMathEx(totalMathEx.current);
+  // },[totalMathEx.current]);
 
   const operator = () => {
     console.log('operator');
@@ -56,7 +68,9 @@ const CalcTemplate = ({typeKeypads}) => {
     },0);
 
     setResultNum ( answer );
-    totalMathEx.current += answer;
+    mathEx.current += answer;
+    dispatch({type:'MATHEX'});
+
    }
    
   const keypadClick = (type, val) => {
@@ -83,11 +97,13 @@ const CalcTemplate = ({typeKeypads}) => {
       setInputNum(val);
       numberArray.push(resultNum);
       signArray.push(val);
-      totalMathEx.current += resultNum+val;
+      mathEx.current += resultNum+val;
+      dispatch({type:'MATHEX'});
 
     }else if(type==='equal'){
       numberArray.push(resultNum);
-      totalMathEx.current += resultNum+val;
+      mathEx.current += resultNum+val;
+      dispatch({type:'MATHEX'});
 
       operator();
 
@@ -116,7 +132,7 @@ const CalcTemplate = ({typeKeypads}) => {
     <>
     <span>현재 입력한 값: {inputNum}</span>
     <br/>
-    <span>입력중인 수식: {mathEx}</span>
+    <span>입력중인 수식: {state.mathEx}</span>
     <div className="CalcWrap"> 
       <div className="CalcRsltBlock">
         {resultNum}
