@@ -1,0 +1,72 @@
+
+.CalcWrap {
+  width: 18.5rem; /** //TODO: 한칸당 가로 길이 수 *n 해서 props로 받은 값을 n에 넣는 방식으로.. */
+  height: 28rem;
+  //border: 1px solid black;
+  margin: 20px;
+  border-radius: 10px 10px 20px;
+  box-shadow: 3px 3px 50px gray;
+};
+
+.CalcRsltBlock {  
+  height: 25%;
+  padding-right: 10px;
+  background: dimgray;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 3rem;
+  color: white;
+  border: 1px solid black;
+  border-bottom-style: none;
+};
+
+.CalcNumBlcok {  
+  width: 100%;
+  height: 75%;
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid black;
+};
+
+.NumLine {  
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+};
+
+.CalcNumKey {  
+  width: 24.55%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  border-left: 0.5px solid black;
+  border-top: 0.5px solid black;
+  font-weight: bold;
+  
+  &.number{
+    background:darkgrey;
+    color:white;
+  }
+
+  &.zero{
+    @extend .number;
+    width:49.4%;
+  }
+
+  &.top{
+    background:grey;
+    color:white;
+  }
+
+  &.sign{
+    background:orange;
+    color:white;
+    border-right: 1px solid black;
+  }
+
+  &.equal{
+    @extend .sign;
+  }
+
+}
