@@ -1,26 +1,17 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react';
+import React, { useState, useRef } from 'react';
 import './CalcStyle.scss';
 
 const numberArray = [];
 const signArray   = [];
 
-
 const CalcTemplate = ({typeKeypads}) => {
 
-  function reducer(state, action){
-    switch (action.type){
-      case 'MATHEX': 
-        return { mathEx: mathEx.current } 
-      default: console.log('etc'); return state;
-    }
-  }
+  const [paintResult, setPaintResult] = useState('0'); //화면에 표시되는 결과값
+  const [paintMathEx, setPaintMathEx] = useState(''); //화면에 표시되는 수식
 
-  const [inputNum, setInputNum] = useState(0); //현재 클릭한 숫자 버튼의 값
-  const [resultNum, setResultNum] = useState('0'); //현재 입력중인 숫자 값
   const mathEx = useRef(''); //입력중인 수식
-  const [state, dispatch] = useReducer(reducer, {
-    mathEx: ''
-  });
+  const inputNum = useRef(0); //현재 클릭한 숫자 버튼의 값
+  const resultNum = useRef(0); //현재 입력중인 숫자 값
 
   // useEffect(()=>{
   //   setMathEx(totalMathEx.current);
@@ -36,6 +27,7 @@ const CalcTemplate = ({typeKeypads}) => {
       //곱셉, 나눗셈을 먼저 계산
       if (element==="x") {
         const rr = numberArray[index] * numberArray[index+1];
+        //새 배열에 순서대로 만드는 방식으로 대체 (filter?)
         tempNumArr[index] = rr;
         tempNumArr[index+1] = null;
         resultsignarr[index] = null;
@@ -52,6 +44,9 @@ const CalcTemplate = ({typeKeypads}) => {
     tempNumArr = tempNumArr.filter(val=> val!==null );
     resultsignarr = resultsignarr.filter(val=> val!==null );
 
+    console.dir(tempNumArr);
+    console.dir(resultsignarr);
+
     //덧셈, 뺄셈 계산
     const answer = tempNumArr.reduce((pre, cur, index) => {
       const sign = resultsignarr[index-1];
@@ -67,44 +62,46 @@ const CalcTemplate = ({typeKeypads}) => {
       
     },0);
 
-    setResultNum ( answer );
-    mathEx.current += answer;
-    dispatch({type:'MATHEX'});
+    setPaintResult(answer);
+    setPaintMathEx(mathEx.current+=answer);
 
    }
    
   const keypadClick = (type, val) => {
     //클릭한 버튼의 type 조회
-    if(type==='number'){
-      if(resultNum === '0'){
-        setResultNum(val);
-      }
+    if(type==='number' ){
       
       //숫자(number)인 경우 계속 이어나간다.
-      setInputNum(val); 
-      setResultNum(parseInt(resultNum + val));
+      inputNum.current = val;
+      resultNum.current = parseInt(resultNum.current+val+'');
+      setPaintResult(resultNum.current);
 
       //숫자(혹은 .)가 눌린 경우 AC -> C 로 바뀐다.
       document.querySelector('.top').innerText = 'C';
       document.querySelector('.top').addEventListener('click',()=>{
-        setResultNum(0);
         alert('clear button click');
       },false);
 
     }else if(type==='sign'){
       //기호(sign)인 경우 입력받은 기호를 확인한다.
-      setResultNum('0');
-      setInputNum(val);
-      numberArray.push(resultNum);
+      mathEx.current += resultNum.current+val;
+      inputNum.current += val;
+      
+      numberArray.push(resultNum.current);
       signArray.push(val);
-      mathEx.current += resultNum+val;
-      dispatch({type:'MATHEX'});
+      
+      resultNum.current = 0;
+      setPaintMathEx(mathEx.current);
 
     }else if(type==='equal'){
-      numberArray.push(resultNum);
-      mathEx.current += resultNum+val;
-      dispatch({type:'MATHEX'});
+      numberArray.push(resultNum.current);
+      mathEx.current += resultNum.current+val;
+      setPaintMathEx(mathEx.current);
 
+      //TODO: equal이 두 번 클릭된 경우에 대한 구현 필요
+      //...
+
+      //계산 실행
       operator();
 
     }else if(type==='top'){
@@ -118,8 +115,6 @@ const CalcTemplate = ({typeKeypads}) => {
 
       //%
       //TODO: 나누기 100
-    }else if(type==='zero'){
-      
     }
 
     
@@ -130,12 +125,10 @@ const CalcTemplate = ({typeKeypads}) => {
 
   return(
     <>
-    <span>현재 입력한 값: {inputNum}</span>
-    <br/>
-    <span>입력중인 수식: {state.mathEx}</span>
+    <span>입력중인 수식: {paintMathEx}</span>
     <div className="CalcWrap"> 
       <div className="CalcRsltBlock">
-        {resultNum}
+        {paintResult}
       </div>
       <div className="CalcNumBlcok">
         <div className="NumLine">
