@@ -10,7 +10,6 @@ const CalcTemplate = ({typeKeypads}) => {
   const [paintMathEx, setPaintMathEx] = useState(''); //화면에 표시되는 수식
 
   const mathEx = useRef(''); //입력중인 수식
-  const inputNum = useRef(0); //현재 클릭한 숫자 버튼의 값
   const resultNum = useRef(0); //현재 입력중인 숫자 값
 
   // useEffect(()=>{
@@ -72,7 +71,6 @@ const CalcTemplate = ({typeKeypads}) => {
     if(type==='number' ){
       
       //숫자(number)인 경우 계속 이어나간다.
-      inputNum.current = val;
       resultNum.current = parseInt(resultNum.current+val+'');
       setPaintResult(resultNum.current);
 
@@ -85,7 +83,6 @@ const CalcTemplate = ({typeKeypads}) => {
     }else if(type==='sign'){
       //기호(sign)인 경우 입력받은 기호를 확인한다.
       mathEx.current += resultNum.current+val;
-      inputNum.current += val;
       
       numberArray.push(resultNum.current);
       signArray.push(val);
