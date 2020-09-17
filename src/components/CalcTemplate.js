@@ -76,8 +76,11 @@ const CalcTemplate = ({typeKeypads}) => {
 
       //숫자(혹은 .)가 눌린 경우 AC -> C 로 바뀐다.
       document.querySelector('.top').innerText = 'C';
+      //이렇게 하면 숫자키가 눌린 횟수만큼 이벤트리스너가 추가됨 ㅠㅠ
+      //버튼 자체에 click을 달아두고
+      //클릭 함수 실행할 때 innerText가 뭔지 확인하거나 classname변경하는 방식으로.....구현해야할듯..???
       document.querySelector('.top').addEventListener('click',()=>{
-        alert('clear button click');
+        console.log('clear buttno click');
       },false);
 
     }else if(type==='sign'){
@@ -122,23 +125,44 @@ const CalcTemplate = ({typeKeypads}) => {
 
   return(
     <>
-    <span>입력중인 수식: {paintMathEx}</span>
+    <span className="MathExWrap">입력중인 수식: {paintMathEx}</span>
     <div className="CalcWrap"> 
       <div className="CalcRsltBlock">
         {paintResult}
       </div>
       <div className="CalcNumBlcok">
-        <div className="NumLine">
-          {typeKeypads.map(keypad => (
-          <div 
-              className={'CalcNumKey '+keypad.keytype} 
-              key={keypad.id} 
-              onClick={()=>keypadClick(keypad.keytype, keypad.text)} 
-          >
-            {keypad.text}
+        <div className="LeftCal">
+          <div className="TopKey">
+            {typeKeypads[0].map(keypad => (
+              <div 
+                key={keypad.id} 
+                className={'CalcNumKey '+keypad.keytype} 
+                onClick={()=>keypadClick(keypad.keytype, keypad.text)} >
+                  {keypad.text} 
+              </div>
+            ))}
           </div>
-          ))}
+          <div className="NumKey">
+            {typeKeypads[1].map(keypad => (
+              <div 
+                key={keypad.id} 
+                className={'CalcNumKey '+keypad.keytype} 
+                onClick={()=>keypadClick(keypad.keytype, keypad.text)} >
+                  {keypad.text} 
+              </div>
+            ))}
+          </div>
         </div>
+        <div className="SignKey">
+            {typeKeypads[2].map(keypad => (
+              <div 
+                key={keypad.id} 
+                className={'CalcNumKey '+keypad.keytype} 
+                onClick={()=>keypadClick(keypad.keytype, keypad.text)} >
+                  {keypad.text} 
+              </div>
+            ))}
+          </div>
       </div>
     </div>
     </>

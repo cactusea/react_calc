@@ -1,8 +1,8 @@
+//TODO: 버튼 길이 뭔가 더 이쁘게 맞추는 방법이 있을 것 같음
 
 .CalcWrap {
   width: 18.5rem; /** //TODO: 한칸당 가로 길이 수 *n 해서 props로 받은 값을 n에 넣는 방식으로.. */
   height: 28rem;
-  //border: 1px solid black;
   margin: 20px;
   border-radius: 10px 10px 20px;
   box-shadow: 3px 3px 50px gray;
@@ -29,12 +29,6 @@
   border-bottom: 1px solid black;
 };
 
-.NumLine {  
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-};
-
 .CalcNumKey {  
   width: 24.55%;
   display:flex;
@@ -43,30 +37,64 @@
   border-left: 0.5px solid black;
   border-top: 0.5px solid black;
   font-weight: bold;
+  height:66px;
   
   &.number{
     background:darkgrey;
     color:white;
+    width: 32.88%;
   }
 
   &.zero{
     @extend .number;
-    width:49.4%;
+    width:66.2%;
   }
 
   &.top{
     background:grey;
     color:white;
+    width: 33.3%;
   }
 
   &.sign{
     background:orange;
     color:white;
     border-right: 1px solid black;
+    width: 100%;
   }
 
   &.equal{
     @extend .sign;
   }
 
+}
+
+.LeftCal{
+  display: flex;
+  flex-direction: column;
+  width: 74.2%;
+}
+
+.TopKey{
+  display:flex;
+  width: 100%;
+}
+
+.SignKey{
+  display:flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  width: 25%;
+}
+
+.NumKey{
+  display:flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+
+.MathExWrap{
+  margin: 20px;
+  display: flex;
 }
