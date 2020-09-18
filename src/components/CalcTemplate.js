@@ -46,17 +46,19 @@ const CalcTemplate = ({typeKeypads}) => {
     //덧셈, 뺄셈 계산
     const answer = tempNumArr.reduce((pre, cur, index) => {
       const sign = resultsignarr[index-1];
+      let result;
       if(pre===0){
-        return pre+cur;
+        result = pre+cur;
       }
-
       if(sign==="+"){
-        return pre+tempNumArr[index];
+        result = pre+tempNumArr[index];
       }else if(sign==="-"){
-        return pre-tempNumArr[index];
+        result = pre-tempNumArr[index];
       }
+      return result;
       
     }, 0);
+    
     setPaintResult(answer);
     setPaintMathEx(mathEx.current+=answer);
   }
@@ -70,7 +72,6 @@ const CalcTemplate = ({typeKeypads}) => {
     
     if(val==='AC'){
       const clearBtn = document.querySelector('.top').innerText;
-
       if(clearBtn==='C'){
         //입력중인 숫자 초기화
         resultNum.current = 0;
@@ -78,19 +79,17 @@ const CalcTemplate = ({typeKeypads}) => {
 
       }else if(clearBtn==='AC'){
         //모든 계산식, 결과값 초기화
-        mathEx.current = '';
         resultNum.current = 0;
+        mathEx.current = '';
       }
 
     }else if(val==='+/-'){
-      console.log('plus/minus button');
       resultNum.current = resultNum.current * -1;
 
     }else if(val==='%'){
-      console.log('percent button');
       resultNum.current = resultNum.current * 0.01;
     }
-    
+
     setPaintMathEx(mathEx.current);
     setPaintResult(resultNum.current);
 
