@@ -43,9 +43,6 @@ const CalcTemplate = ({typeKeypads}) => {
     tempNumArr = tempNumArr.filter(val=> val!==null );
     resultsignarr = resultsignarr.filter(val=> val!==null );
 
-    console.dir(tempNumArr);
-    console.dir(resultsignarr);
-
     //덧셈, 뺄셈 계산
     const answer = tempNumArr.reduce((pre, cur, index) => {
       const sign = resultsignarr[index-1];
@@ -60,15 +57,48 @@ const CalcTemplate = ({typeKeypads}) => {
       }
       
     }, 0);
-
     setPaintResult(answer);
     setPaintMathEx(mathEx.current+=answer);
+  }
 
-   }
+      
+  //TODO: keydown 이벤트 구현
+  //숫자, 백스페이스
    
+  //top key 클릭 이벤트
+  const topKeypadClick = (val) => {
+    
+    if(val==='AC'){
+      const clearBtn = document.querySelector('.top').innerText;
+
+      if(clearBtn==='C'){
+        //입력중인 숫자 초기화
+        resultNum.current = 0;
+        document.querySelector('.top').innerText = 'AC';
+
+      }else if(clearBtn==='AC'){
+        //모든 계산식, 결과값 초기화
+        mathEx.current = '';
+        resultNum.current = 0;
+      }
+
+    }else if(val==='+/-'){
+      console.log('plus/minus button');
+      resultNum.current = resultNum.current * -1;
+
+    }else if(val==='%'){
+      console.log('percent button');
+      resultNum.current = resultNum.current * 0.01;
+    }
+    
+    setPaintMathEx(mathEx.current);
+    setPaintResult(resultNum.current);
+
+  } 
+
   const keypadClick = (type, val) => {
     //클릭한 버튼의 type 조회
-    if(type==='number' ){
+    if(type==='number' || type==='zero' ){
       
       //숫자(number)인 경우 계속 이어나간다.
       resultNum.current = parseInt(resultNum.current+val+'');
@@ -76,12 +106,6 @@ const CalcTemplate = ({typeKeypads}) => {
 
       //숫자(혹은 .)가 눌린 경우 AC -> C 로 바뀐다.
       document.querySelector('.top').innerText = 'C';
-      //이렇게 하면 숫자키가 눌린 횟수만큼 이벤트리스너가 추가됨 ㅠㅠ
-      //버튼 자체에 click을 달아두고
-      //클릭 함수 실행할 때 innerText가 뭔지 확인하거나 classname변경하는 방식으로.....구현해야할듯..???
-      document.querySelector('.top').addEventListener('click',()=>{
-        console.log('clear buttno click');
-      },false);
 
     }else if(type==='sign'){
       //기호(sign)인 경우 입력받은 기호를 확인한다.
@@ -92,6 +116,8 @@ const CalcTemplate = ({typeKeypads}) => {
       
       resultNum.current = 0;
       setPaintMathEx(mathEx.current);
+
+      //TODO: 연산자가 연속해서 눌리는 경우?
 
     }else if(type==='equal'){
       numberArray.push(resultNum.current);
@@ -104,22 +130,7 @@ const CalcTemplate = ({typeKeypads}) => {
       //계산 실행
       operator();
 
-    }else if(type==='top'){
-      //위쪽 버튼(top)인 경우
-      //TODO: AC, C 기능 구현
-      //AC: All Clear. 모든 계산 초기화, 메모리 초기화
-      //C: clear. 모든 계산을 초기화한다.
-
-      //+/-
-      //TODO: 음수, 양수 전환
-
-      //%
-      //TODO: 나누기 100
     }
-
-    
-    //TODO: keydown 이벤트 구현
-    //숫자, 백스페이스
 
   }
 
@@ -132,16 +143,20 @@ const CalcTemplate = ({typeKeypads}) => {
       </div>
       <div className="CalcNumBlcok">
         <div className="LeftCal">
+          {/* TopKey START */}
           <div className="TopKey">
             {typeKeypads[0].map(keypad => (
               <div 
                 key={keypad.id} 
                 className={'CalcNumKey '+keypad.keytype} 
-                onClick={()=>keypadClick(keypad.keytype, keypad.text)} >
+                onClick={()=>topKeypadClick(keypad.text)} >
                   {keypad.text} 
               </div>
             ))}
           </div>
+          {/* TopKey END */}
+
+          {/* NumKey START */}
           <div className="NumKey">
             {typeKeypads[1].map(keypad => (
               <div 
@@ -152,7 +167,10 @@ const CalcTemplate = ({typeKeypads}) => {
               </div>
             ))}
           </div>
+          {/* NumKey END */}
         </div>
+
+        {/* SignKey Start */}
         <div className="SignKey">
             {typeKeypads[2].map(keypad => (
               <div 
@@ -163,7 +181,9 @@ const CalcTemplate = ({typeKeypads}) => {
               </div>
             ))}
           </div>
-      </div>
+        </div>
+        {/* SignKey END */}
+        
     </div>
     </>
   )
