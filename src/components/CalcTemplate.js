@@ -13,8 +13,8 @@ const CalcTemplate = ({typeKeypads}) => {
   const resultNum = useRef(0); //현재 입력중인 숫자 값
 
   // useEffect(()=>{
-  //   setMathEx(totalMathEx.current);
-  // },[totalMathEx.current]);
+  //   
+  // },[]);
 
   const operator = () => {
     console.log('operator');
@@ -59,7 +59,7 @@ const CalcTemplate = ({typeKeypads}) => {
         return pre-tempNumArr[index];
       }
       
-    },0);
+    }, 0);
 
     setPaintResult(answer);
     setPaintMathEx(mathEx.current+=answer);
