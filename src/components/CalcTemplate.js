@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './CalcStyle.scss';
+import * as Utils from './common/Utils';
 
 const numberArray = [];
 const signArray   = [];
@@ -12,12 +13,8 @@ const CalcTemplate = ({typeKeypads}) => {
   const mathEx = useRef(''); //입력중인 수식
   const resultNum = useRef(0); //현재 입력중인 숫자 값
 
-  // useEffect(()=>{
-  //   
-  // },[]);
-
   const operator = () => {
-    console.log('operator');
+
     let tempNumArr = numberArray.slice();
     let resultsignarr =  signArray.slice();
     //TODO: 배열 여러개 두지 말고 객체 방식으로 구현해보면 어떨까
@@ -44,7 +41,7 @@ const CalcTemplate = ({typeKeypads}) => {
     resultsignarr = resultsignarr.filter(val=> val!==null );
 
     //덧셈, 뺄셈 계산
-    const answer = tempNumArr.reduce((pre, cur, index) => {
+    let answer = tempNumArr.reduce((pre, cur, index) => {
       const sign = resultsignarr[index-1];
       let result;
       if(pre===0){
@@ -59,6 +56,13 @@ const CalcTemplate = ({typeKeypads}) => {
       
     }, 0);
     
+    //TODO: isInteger는 ie11에서는 안됨, 지원 가능하도록 수정
+    //결과값이 정수인지 확인 후,
+    //수식에 사용된 숫자들 소수점 자릿수 확인 -> answer에 toFixed 적용
+    if(!Number.isInteger(answer)){
+      answer = Utils.checkDecimal(answer);
+    }
+
     setPaintResult(answer);
     setPaintMathEx(mathEx.current+=answer);
   }
@@ -95,21 +99,10 @@ const CalcTemplate = ({typeKeypads}) => {
 
   } 
 
-  const keypadClick = (type, val) => {
-    //클릭한 버튼의 type 조회
-    if(type==='number' || type==='zero' ){
-      
-      //숫자(number)인 경우 계속 이어나간다.
-      resultNum.current = parseInt(resultNum.current+val+'');
-      setPaintResult(resultNum.current);
-
-      //숫자(혹은 .)가 눌린 경우 AC -> C 로 바뀐다.
-      document.querySelector('.top').innerText = 'C';
-
-    }else if(type==='sign'){
-      //기호(sign)인 경우 입력받은 기호를 확인한다.
+  //연산자(sign) key 클릭 이벤트
+  const signKeypadClick = (type, val) => {
+    if(type==='sign'){
       mathEx.current += resultNum.current+val;
-      
       numberArray.push(resultNum.current);
       signArray.push(val);
       
@@ -128,8 +121,23 @@ const CalcTemplate = ({typeKeypads}) => {
 
       //계산 실행
       operator();
-
     }
+
+  }
+
+  //숫자 key 클릭 이벤트
+  const numKeypadClick = (type, val) => {
+
+    if(type==='number' || type==='zero' ){
+      resultNum.current = parseFloat(resultNum.current+val+'');
+
+      //숫자(혹은 .)가 눌린 경우 AC -> C 로 바뀐다.
+      document.querySelector('.top').innerText = 'C';
+
+    }else if(type==='dot'){
+      resultNum.current += '.';
+    }
+    setPaintResult(resultNum.current);
 
   }
 
@@ -161,7 +169,7 @@ const CalcTemplate = ({typeKeypads}) => {
               <div 
                 key={keypad.id} 
                 className={'CalcNumKey '+keypad.keytype} 
-                onClick={()=>keypadClick(keypad.keytype, keypad.text)} >
+                onClick={()=>numKeypadClick(keypad.keytype, keypad.text)} >
                   {keypad.text} 
               </div>
             ))}
@@ -175,7 +183,7 @@ const CalcTemplate = ({typeKeypads}) => {
               <div 
                 key={keypad.id} 
                 className={'CalcNumKey '+keypad.keytype} 
-                onClick={()=>keypadClick(keypad.keytype, keypad.text)} >
+                onClick={()=>signKeypadClick(keypad.keytype, keypad.text)} >
                   {keypad.text} 
               </div>
             ))}

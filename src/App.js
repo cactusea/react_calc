@@ -21,7 +21,7 @@ const App = () => {
       {id: '5', text:'3',   keytype:'number'},
       {id: '4', text:'2',   keytype:'number'},
       {id: '3', text:'1',   keytype:'number'},
-      {id: '13', text:'.',  keytype:'number'},
+      {id: '13', text:'.',  keytype:'dot'},
       {id: '12', text:'0',  keytype:'zero'},
     ],
     [

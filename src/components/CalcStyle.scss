@@ -46,6 +46,10 @@
     width: 32.88%;
   }
 
+  &.dot{
+    @extend .number;
+  }
+
   &.zero{
     @extend .number;
     width:66.2%;
