@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useReducer } from 'react';
 import './CalcStyle.scss';
 import * as Utils from './common/Utils';
 
@@ -7,16 +7,32 @@ const signArray   = [];
 
 const CalcTemplate = ({typeKeypads}) => {
 
-  const [paintResult, setPaintResult] = useState('0'); //화면에 표시되는 결과값
-  const [paintMathEx, setPaintMathEx] = useState(''); //화면에 표시되는 수식
+  const CalcReducer = (state, action) => {
+    switch(action.type){
+      case 'PAINT_MATHEX':
+        return { ...state, rdmathEx: action.value};
+      case 'PAINT_RESULT':
+        return {...state, rdresultNum: action.value};
+      default:
+        return state;
+    }
+  }
+
+  const [state, dispatch] = useReducer(CalcReducer, {rdmathEx:'', rdresultNum:0});
+  const paintMathEx = (val) => {
+    dispatch({ type: 'PAINT_MATHEX', value: val });
+  }
+  const paintResult = (val) => {
+    dispatch({ type: 'PAINT_RESULT', value: val });
+  }
 
   const mathEx = useRef(''); //입력중인 수식
   const resultNum = useRef(0); //현재 입력중인 숫자 값
 
+  /** 수식을 계산한다. */
   const operator = () => {
-
     let tempNumArr = numberArray.slice();
-    let resultsignarr =  signArray.slice();
+    let resultsignarr = signArray.slice();
     //TODO: 배열 여러개 두지 말고 객체 방식으로 구현해보면 어떨까
 
     signArray.forEach((element, index) => {
@@ -63,15 +79,16 @@ const CalcTemplate = ({typeKeypads}) => {
       answer = Utils.checkDecimal(answer);
     }
 
-    setPaintResult(answer);
-    setPaintMathEx(mathEx.current+=answer);
-  }
+    paintResult(answer);
+    paintMathEx(mathEx.current+=answer);
 
+  }
       
   //TODO: keydown 이벤트 구현
   //숫자, 백스페이스
    
-  //top key 클릭 이벤트
+
+  /** top key 클릭 이벤트 */
   const topKeypadClick = (val) => {
     
     if(val==='AC'){
@@ -94,12 +111,12 @@ const CalcTemplate = ({typeKeypads}) => {
       resultNum.current = resultNum.current * 0.01;
     }
 
-    setPaintMathEx(mathEx.current);
-    setPaintResult(resultNum.current);
+    paintMathEx(mathEx.current);
+    paintResult(resultNum.current);
 
   } 
 
-  //연산자(sign) key 클릭 이벤트
+  /** 연산자(sign) key 클릭 이벤트 */
   const signKeypadClick = (type, val) => {
     if(type==='sign'){
       mathEx.current += resultNum.current+val;
@@ -107,17 +124,16 @@ const CalcTemplate = ({typeKeypads}) => {
       signArray.push(val);
       
       resultNum.current = 0;
-      setPaintMathEx(mathEx.current);
+      paintMathEx(mathEx.current);
 
       //TODO: 연산자가 연속해서 눌리는 경우?
 
     }else if(type==='equal'){
       numberArray.push(resultNum.current);
       mathEx.current += resultNum.current+val;
-      setPaintMathEx(mathEx.current);
+      paintMathEx(mathEx.current);
 
       //TODO: equal이 두 번 클릭된 경우에 대한 구현 필요
-      //...
 
       //계산 실행
       operator();
@@ -125,9 +141,8 @@ const CalcTemplate = ({typeKeypads}) => {
 
   }
 
-  //숫자 key 클릭 이벤트
+  /** 숫자 key 클릭 이벤트 */
   const numKeypadClick = (type, val) => {
-
     if(type==='number' || type==='zero' ){
       resultNum.current = parseFloat(resultNum.current+val+'');
 
@@ -137,16 +152,16 @@ const CalcTemplate = ({typeKeypads}) => {
     }else if(type==='dot'){
       resultNum.current += '.';
     }
-    setPaintResult(resultNum.current);
 
+    paintResult(resultNum.current);
   }
 
   return(
     <>
-    <span className="MathExWrap">입력중인 수식: {paintMathEx}</span>
+    <span className="MathExWrap">입력중인 수식: {state.rdmathEx}</span>
     <div className="CalcWrap"> 
       <div className="CalcRsltBlock">
-        {paintResult}
+        {state.rdresultNum}
       </div>
       <div className="CalcNumBlcok">
         <div className="LeftCal">
