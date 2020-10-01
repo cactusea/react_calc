@@ -2,85 +2,76 @@ import React, { useRef, useReducer } from 'react';
 import './CalcStyle.scss';
 import * as Utils from './common/Utils';
 
-const numberArray = [];
-const signArray   = [];
+// const numberArray = [];
+// const signArray   = [];
+const mathArray   = [];
 
 const CalcTemplate = ({typeKeypads}) => {
 
   const CalcReducer = (state, action) => {
     switch(action.type){
       case 'PAINT_MATHEX':
-        return { ...state, rdmathEx: action.value};
+        return { ...state, mathEx: action.value};
       case 'PAINT_RESULT':
-        return {...state, rdresultNum: action.value};
+        return {...state, resultNum: action.value};
+      case 'PAINT_ANSWER':
+        return {...state, answer: action.value};
       default:
         return state;
     }
   }
 
-  const [state, dispatch] = useReducer(CalcReducer, {rdmathEx:'', rdresultNum:0});
+  const [state, dispatch] = useReducer(CalcReducer, {mathEx:'', resultNum:0, answer:''});
   const paintMathEx = (val) => {
     dispatch({ type: 'PAINT_MATHEX', value: val });
   }
   const paintResult = (val) => {
     dispatch({ type: 'PAINT_RESULT', value: val });
   }
+  const paintAnswer = (val) => {
+    dispatch({ type: 'PAINT_ANSWER', value: val });
+  }
 
   const mathEx = useRef(''); //입력중인 수식
   const resultNum = useRef(0); //현재 입력중인 숫자 값
+  const completed = useRef(false);
 
   /** 수식을 계산한다. */
   const operator = () => {
-    let tempNumArr = numberArray.slice();
-    let resultsignarr = signArray.slice();
-    //TODO: 배열 여러개 두지 말고 객체 방식으로 구현해보면 어떨까
+    let answer = 0;
 
-    signArray.forEach((element, index) => {
-      //곱셉, 나눗셈을 먼저 계산
-      if (element==="x") {
-        const rr = numberArray[index] * numberArray[index+1];
-        //새 배열에 순서대로 만드는 방식으로 대체 (filter?)
-        tempNumArr[index] = rr;
-        tempNumArr[index+1] = null;
-        resultsignarr[index] = null;
-      }
-      else if(element==="÷"){
-        const rr = numberArray[index] / numberArray[index+1];
-        tempNumArr[index] = rr;
-        tempNumArr[index+1] = null;
-        resultsignarr[index] = null;
-      }
-    });
+    // 후위 계산식으로 변환
+    // 괄호없이 기본 사칙연산 순서대로 진행하는 것으로 한다.
+    const postfixMathEx = Utils.postfixCalc(mathArray);
 
-    //null값이 된 부분 삭제
-    tempNumArr = tempNumArr.filter(val=> val!==null );
-    resultsignarr = resultsignarr.filter(val=> val!==null );
-
-    //덧셈, 뺄셈 계산
-    let answer = tempNumArr.reduce((pre, cur, index) => {
-      const sign = resultsignarr[index-1];
-      let result;
-      if(pre===0){
-        result = pre+cur;
+    //후위 계산식 연산
+    let numStack = [];
+    postfixMathEx.forEach((val)=> {
+      if(typeof val === 'number'){
+        numStack.push(val);
+      }else{
+        const next = numStack.pop();
+        const prev = numStack.pop();
+        numStack.push(Utils.operator(prev, next, val));
       }
-      if(sign==="+"){
-        result = pre+tempNumArr[index];
-      }else if(sign==="-"){
-        result = pre-tempNumArr[index];
-      }
-      return result;
-      
-    }, 0);
+    })
     
-    //TODO: isInteger는 ie11에서는 안됨, 지원 가능하도록 수정
+    answer = numStack[0];
+
+     //TODO: isInteger는 ie11에서는 안됨, 지원 가능하도록 수정
     //결과값이 정수인지 확인 후,
     //수식에 사용된 숫자들 소수점 자릿수 확인 -> answer에 toFixed 적용
-    if(!Number.isInteger(answer)){
+    if(!Number.isInteger(answer) && answer !== undefined){
+      console.log(typeof answer);
       answer = Utils.checkDecimal(answer);
     }
 
+    completed.current = true;
+    resultNum.current = '';
+
     paintResult(answer);
-    paintMathEx(mathEx.current+=answer);
+    paintMathEx(mathEx.current);
+    paintAnswer('='+answer);
 
   }
       
@@ -119,9 +110,15 @@ const CalcTemplate = ({typeKeypads}) => {
   /** 연산자(sign) key 클릭 이벤트 */
   const signKeypadClick = (type, val) => {
     if(type==='sign'){
+      if(!completed.current){ 
+        //numberArray.push(resultNum.current); 
+        mathArray.push(resultNum.current);
+      }
+      completed.current = false;
       mathEx.current += resultNum.current+val;
-      numberArray.push(resultNum.current);
-      signArray.push(val);
+      
+      // signArray.push(val);
+      mathArray.push(val);
       
       resultNum.current = 0;
       paintMathEx(mathEx.current);
@@ -129,12 +126,21 @@ const CalcTemplate = ({typeKeypads}) => {
       //TODO: 연산자가 연속해서 눌리는 경우?
 
     }else if(type==='equal'){
-      numberArray.push(resultNum.current);
-      mathEx.current += resultNum.current+val;
+      if(completed.current){
+        alert('사용할 수 없습니다.');
+        return;
+        //직전 수식을 반복한다.
+        // resultNum.current = numberArray[numberArray.length-1];
+        // mathEx.current += signArray[signArray.length-1];
+        // signArray.push(signArray[signArray.length-1]);
+      }
+
+      // numberArray.push(resultNum.current);
+      mathArray.push(resultNum.current);
+
+      mathEx.current += resultNum.current;
       paintMathEx(mathEx.current);
-
-      //TODO: equal이 두 번 클릭된 경우에 대한 구현 필요
-
+      
       //계산 실행
       operator();
     }
@@ -158,10 +164,10 @@ const CalcTemplate = ({typeKeypads}) => {
 
   return(
     <>
-    <span className="MathExWrap">입력중인 수식: {state.rdmathEx}</span>
+    <span className="MathExWrap">입력중인 수식: {state.mathEx}{state.answer}</span>
     <div className="CalcWrap"> 
       <div className="CalcRsltBlock">
-        {state.rdresultNum}
+        {state.resultNum}
       </div>
       <div className="CalcNumBlcok">
         <div className="LeftCal">
