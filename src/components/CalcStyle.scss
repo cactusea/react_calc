@@ -1,11 +1,11 @@
-//TODO: 버튼 길이 뭔가 더 이쁘게 맞추는 방법이 있을 것 같음
-
 .CalcWrap {
-  width: 18.5rem; /** //TODO: 한칸당 가로 길이 수 *n 해서 props로 받은 값을 n에 넣는 방식으로.. */
-  height: 28rem;
+  /** //TODO: 한칸당 가로 길이 수 *n 해서 props로 받은 값을 n에 넣는 방식으로.. */
+  width: 72px * 4;
+  height: 447px;
   margin: 20px;
-  border-radius: 10px 10px 20px;
+  border-radius: 10px 10px 10px;
   box-shadow: 3px 3px 50px gray;
+  border: 1px solid black;
 };
 
 .CalcRsltBlock {  
@@ -15,10 +15,9 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  font-size: 3rem;
+  font-size: 3rem; //TODO: 8-9자리까지는 ok 그 다음부터는 넘침미다...
   color: white;
-  border-radius: 10px 10px 0 0 ;
-  border: 1px solid black;
+  border-radius: 9px 9px 0 0;
   border-bottom-style: none;
 };
 
@@ -26,24 +25,23 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  border-radius: 0 0 10px 10px;
-  border-bottom: 1px solid black;
+  border-radius: 0 0 9px 9px;
 };
 
 .CalcNumKey {  
-  width: 24.55%;
+  width: 4.5rem;
   display:flex;
   justify-content: center;
   align-items: center;
-  border-left: 0.5px solid black;
-  border-top: 0.5px solid black;
   font-weight: bold;
   height:66px;
   
   &.number{
     background:darkgrey;
     color:white;
-    width: 32.88%;
+    width: 4.43rem;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
   }
 
   &.dot{
@@ -52,26 +50,29 @@
 
   &.zero{
     @extend .number;
-    width:66.2%;
-    border-radius: 0 0 0 10px;
+    width: 143px;
+    border-radius: 0 0 0 9px;
   }
 
   &.top{
     background:grey;
     color:white;
-    width: 33.3%;
+    width: 4.5rem;
+    border: 1px solid black;
+    border-left-style: none;
+    border-bottom-style: none;
   }
 
   &.sign{
     background:orange;
     color:white;
-    border-right: 1px solid black;
+    border-top: 1px solid black;;
     width: 100%;
   }
 
   &.equal{
     @extend .sign;
-    border-radius: 0 0 10px 0;
+    border-radius: 0 0 9px 0;
   }
 
 }
@@ -79,7 +80,7 @@
 .LeftCal{
   display: flex;
   flex-direction: column;
-  width: 74.2%;
+  width: 72px * 3;
 }
 
 .TopKey{
@@ -91,7 +92,7 @@
   display:flex;
   flex-wrap: wrap;
   flex-direction: column;
-  width: 25%;
+  width: 72px;
 }
 
 .NumKey{

@@ -1,4 +1,4 @@
-import React, { useRef, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer } from 'react';
 import './CalcStyle.scss';
 import * as Utils from './common/Utils';
 
@@ -7,6 +7,23 @@ import * as Utils from './common/Utils';
 const mathArray   = [];
 
 const CalcTemplate = ({typeKeypads}) => {
+
+  useEffect(()=>{
+    const keyPressHandler = e => {
+      const keyType = pressKeyChk(e.key);
+      if(keyType==='number' || keyType==='zero' || keyType==='dot'){
+        numKeypadClick(keyType, e.key);
+      }
+      else if(keyType==='top'){
+        topKeypadClick(keyType, e.key);
+      }
+      else if(keyType==='sign' || keyType==='equal'){
+        signKeypadClick(keyType, e.key);
+      }
+    }
+
+    document.addEventListener('keypress', keyPressHandler);
+  });
 
   const CalcReducer = (state, action) => {
     switch(action.type){
@@ -35,6 +52,7 @@ const CalcTemplate = ({typeKeypads}) => {
   const mathEx = useRef(''); //입력중인 수식
   const resultNum = useRef(0); //현재 입력중인 숫자 값
   const completed = useRef(false);
+
 
   /** 수식을 계산한다. */
   const operator = () => {
@@ -75,10 +93,6 @@ const CalcTemplate = ({typeKeypads}) => {
 
   }
       
-  //TODO: keydown 이벤트 구현
-  //숫자, 백스페이스
-   
-
   /** top key 클릭 이벤트 */
   const topKeypadClick = (val) => {
     
@@ -93,6 +107,7 @@ const CalcTemplate = ({typeKeypads}) => {
         //모든 계산식, 결과값 초기화
         resultNum.current = 0;
         mathEx.current = '';
+        //TODO: 입력중인 수식에서 답 부분은 clear 되지 않음
       }
 
     }else if(val==='+/-'){
@@ -156,10 +171,25 @@ const CalcTemplate = ({typeKeypads}) => {
       document.querySelector('.top').innerText = 'C';
 
     }else if(type==='dot'){
-      resultNum.current += '.';
+      //resultNum에 .이 이미 포함되어 있는지 확인
+      if(resultNum.current.toString().indexOf('.') < 0){
+        resultNum.current += '.';
+      }
     }
 
     paintResult(resultNum.current);
+  }
+
+  function pressKeyChk(val) {
+    let targetType;
+    typeKeypads.forEach(keypad=>{
+      keypad.forEach(key=>{
+        if(key.text===val){
+          targetType = key.keytype;
+        }
+      })
+    })
+    return targetType;
   }
 
   return(
