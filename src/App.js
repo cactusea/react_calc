@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './App.css';
 import CalcTemplate from './components/CalcTemplate';
+import Button from './components/Button';
 
 const App = () => {
   
@@ -33,15 +34,27 @@ const App = () => {
     ],
 ];
 
+
   const [typeKeypads, setTypeKeypads] = useState(calcType);
+
+  // const btnState = useRef(false);
+  const [btnState, setBtnState] = useState([
+    {key:0, value:'basic', name:'기본', state:true},
+    {key:1, value:'engineering', name:'공학용', state:false},
+    {key:2, value:'programmer', name:'프로그래머', state:false}
+  ])
+
+  const onClick = useCallback((key) => {
+    setBtnState(
+      btnState.map(btn=>
+        btn.key === key? {...btn, state:true} : {...btn, state:false}
+      )
+    )
+  },[btnState]);
 
   return(
     <>
-    <div>
-      <button key={1} value="basic" onClick={()=>alert('기본 계산기')}>기본</button>
-      <button key={2} value="engineering" onClick={()=>alert('공학용 계산기')}>공학용</button>
-      <button key={3} value="programmer" onClick={()=>alert('프로그래머 계산기')}>프로그래머</button>
-    </div>
+    <Button btnState={btnState} onClick={onClick}/>
     <CalcTemplate typeKeypads={typeKeypads}/>
     </>
   )
