@@ -77,6 +77,16 @@
 
 }
 
+.engtemmmm{
+  display: flex;
+}
+.EngnWrap{
+  display: flex;
+  flex-wrap: wrap;
+  background: gray;
+  width: 72px * 6 + 6;
+}
+
 .LeftCal{
   display: flex;
   flex-direction: column;
@@ -104,4 +114,21 @@
 .MathExWrap{
   margin: 20px;
   display: flex;
+}
+
+.PreSuperScr {
+  font-size: 12px;
+  position: relative;
+  top:-5px;
+}
+.SuperScr {
+  font-size: 12px;
+  position: relative;
+  top:-5px;
+}
+
+.SubScr {
+  font-size: 12px;
+  position: relative; 
+  top:5px;
 }

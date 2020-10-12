@@ -6,8 +6,7 @@ import * as Utils from './common/Utils';
 // const signArray   = [];
 const mathArray   = [];
 
-const CalcTemplate = ({typeKeypads}) => {
-
+const CalcTemplate = ({typeKeypads, isLogged}) => {
   useEffect(()=>{
     const keyPressHandler = e => {
       const keyType = pressKeyChk(e.key);
@@ -21,9 +20,8 @@ const CalcTemplate = ({typeKeypads}) => {
         signKeypadClick(keyType, e.key);
       }
     }
-
     document.addEventListener('keypress', keyPressHandler);
-  });
+  },[]);
 
   const CalcReducer = (state, action) => {
     switch(action.type){
@@ -52,7 +50,6 @@ const CalcTemplate = ({typeKeypads}) => {
   const mathEx = useRef(''); //입력중인 수식
   const resultNum = useRef(0); //현재 입력중인 숫자 값
   const completed = useRef(false);
-
 
   /** 수식을 계산한다. */
   const operator = () => {
@@ -200,6 +197,27 @@ const CalcTemplate = ({typeKeypads}) => {
         {state.resultNum}
       </div>
       <div className="CalcNumBlcok">
+        {isLogged==='engineering' &&
+          // <div className="engtemmmm">
+          <div className="EngnWrap">
+            {typeKeypads[3].map(keypad=>(
+              <div key={keypad.id} className={'CalcNumKey '+keypad.keytype}>
+               {keypad.preSuper &&  //위 첨자
+                  <span className='PreSuperScr'>{keypad.preSuper}</span>
+                } 
+              {keypad.text}
+                {keypad.super &&  //위 첨자
+                  <span className='SuperScr'>{keypad.super}</span>
+                }
+                {keypad.sub && //아래 첨자
+                  <span className='SubScr'>{keypad.sub}</span>
+                }
+              </div>
+            ))}
+          </div>
+          // </div>
+        }
+        {isLogged==='programmer'&&<div>prprppprp</div>}
         <div className="LeftCal">
           {/* TopKey START */}
           <div className="TopKey">
@@ -241,7 +259,6 @@ const CalcTemplate = ({typeKeypads}) => {
           </div>
         </div>
         {/* SignKey END */}
-        
     </div>
     </>
   )
