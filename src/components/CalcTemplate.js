@@ -198,7 +198,7 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
         {isLogged==='engineering' &&
           <div className="EngnWrap">
             {typeKeypads[3].map(keypad=>(
-              <div key={keypad.id} className={'CalcNumKey '+keypad.keytype}>
+              <div key={keypad.id} className={'CalcNumKey '+keypad.keytype} onClick={()=>alert('현재 공학용 계산기는 사용하실 수 없습니다.')}>
                {keypad.preSuper &&  //위 첨자
                   <span className='PreSuperScr'>{keypad.preSuper}</span>
                 } 
