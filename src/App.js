@@ -74,9 +74,7 @@ const engnCalc = [
   ],
 ];
 
-  const progCalc = []; //프로그래머용
-
-  const keypadType = [basicCalc, engnCalc, progCalc];
+  const keypadType = [basicCalc, engnCalc];
   const [typeKeypads, setTypeKeypads] = useState(keypadType[0]);
   const type = useRef('basic');
   
@@ -84,7 +82,7 @@ const engnCalc = [
   const [btnState, setBtnState] = useState([
     {key:0, value:'basic', name:'기본', state:true},
     {key:1, value:'engineering', name:'공학용', state:false},
-    {key:2, value:'programmer', name:'프로그래머', state:false}
+    // {key:2, value:'programmer', name:'프로그래머', state:false}
   ])
 
   const onClick = useCallback((key) => {

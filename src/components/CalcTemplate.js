@@ -73,7 +73,6 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     
     answer = numStack[0];
 
-     //TODO: isInteger는 ie11에서는 안됨, 지원 가능하도록 수정
     //결과값이 정수인지 확인 후,
     //수식에 사용된 숫자들 소수점 자릿수 확인 -> answer에 toFixed 적용
     if(!Number.isInteger(answer) && answer !== undefined){
@@ -92,7 +91,6 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
       
   /** top key 클릭 이벤트 */
   const topKeypadClick = (val) => {
-    
     if(val==='AC'){
       const clearBtn = document.querySelector('.top').innerText;
       if(clearBtn==='C'){
@@ -198,7 +196,6 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
       </div>
       <div className="CalcNumBlcok">
         {isLogged==='engineering' &&
-          // <div className="engtemmmm">
           <div className="EngnWrap">
             {typeKeypads[3].map(keypad=>(
               <div key={keypad.id} className={'CalcNumKey '+keypad.keytype}>
@@ -215,9 +212,8 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
               </div>
             ))}
           </div>
-          // </div>
         }
-        {isLogged==='programmer'&&<div>prprppprp</div>}
+        
         <div className="LeftCal">
           {/* TopKey START */}
           <div className="TopKey">
