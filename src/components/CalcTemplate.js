@@ -92,11 +92,11 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
   /** top key 클릭 이벤트 */
   const topKeypadClick = (val) => {
     if(val==='AC'){
-      const clearBtn = document.querySelector('.top').innerText;
+      const clearBtn = document.querySelector('.TopKey').querySelector('.top').innerText;
       if(clearBtn==='C'){
         //입력중인 숫자 초기화
         resultNum.current = 0;
-        document.querySelector('.top').innerText = 'AC';
+        document.querySelector('.TopKey').querySelector('.top').innerText = 'AC';
 
       }else if(clearBtn==='AC'){
         //모든 계산식, 결과값 초기화
@@ -163,7 +163,7 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
       resultNum.current = parseFloat(resultNum.current+val+'');
 
       //숫자(혹은 .)가 눌린 경우 AC -> C 로 바뀐다.
-      document.querySelector('.top').innerText = 'C';
+      document.querySelector('.TopKey').querySelector('.top').innerText = 'C';
 
     }else if(type==='dot'){
       //resultNum에 .이 이미 포함되어 있는지 확인
@@ -213,7 +213,7 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
             ))}
           </div>
         }
-        
+
         <div className="LeftCal">
           {/* TopKey START */}
           <div className="TopKey">
