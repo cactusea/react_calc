@@ -35,7 +35,7 @@
   align-items: center;
   font-weight: bold;
   height:66px;
-  
+
   &.number{
     background:darkgrey;
     color:white;
@@ -74,18 +74,19 @@
     @extend .sign;
     border-radius: 0 0 9px 0;
   }
-
 }
 
-.engtemmmm{
-  display: flex;
-}
+
 .EngnWrap{
   display: flex;
   flex-direction: row-reverse;
   flex-wrap: wrap;
-  background: gray;
   width: 72px * 6 + 6;
+  .CalcNumKey{
+    &:last-child{
+      border-radius: 0 0 0 9px;
+    }
+  }
 }
 
 .LeftCal{
@@ -110,6 +111,11 @@
   display:flex;
   flex-wrap: wrap;
   flex-direction: row-reverse;
+  // .CalcNumKey{
+  //   &:last-child{
+  //     color:red;
+  //   }
+  // }
 }
 
 .MathExWrap{

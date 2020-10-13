@@ -102,8 +102,10 @@ const engnCalc = [
     let CalcWrap = document.querySelector('.CalcWrap');
     if(isLogged==='basic'){
       CalcWrap.style.setProperty('width','288px');
+      document.querySelector('.zero').style.setProperty('border-radius','0 0 0 9px');
     }else if(isLogged==='engineering'){
       CalcWrap.style.setProperty('width','726px');
+      document.querySelector('.zero').style.setProperty('border-radius','0');
     }
   }
 
