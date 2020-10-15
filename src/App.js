@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import './App.css';
 import CalcTemplate from './components/CalcTemplate';
 import Button from './components/Button';
+import HistoryList from './components/HistoryList';
 
 const App = () => {
   
@@ -78,7 +79,6 @@ const engnCalc = [
   const [typeKeypads, setTypeKeypads] = useState(keypadType[0]);
   const type = useRef('basic');
   
-  // const btnState = useRef(false);
   const [btnState, setBtnState] = useState([
     {key:0, value:'basic', name:'기본', state:true},
     {key:1, value:'engineering', name:'공학용', state:false},
@@ -95,24 +95,39 @@ const engnCalc = [
     type.current = btnState[key].value;
     wrappainter();
     
-  },[btnState]);
+  },[btnState, keypadType]);
 
   const wrappainter=()=>{
-    const isLogged = type.current;
+    const typeChk = type.current;
     let CalcWrap = document.querySelector('.CalcWrap');
-    if(isLogged==='basic'){
+    if(typeChk==='basic'){
       CalcWrap.style.setProperty('width','288px');
       document.querySelector('.zero').style.setProperty('border-radius','0 0 0 9px');
-    }else if(isLogged==='engineering'){
+    }else if(typeChk==='engineering'){
       CalcWrap.style.setProperty('width','726px');
       document.querySelector('.zero').style.setProperty('border-radius','0');
     }
   }
 
+  const [history,setHistory] = useState([]);
+  const historyId = useRef(0);
+
+  const wrhist = useCallback(
+    mathEx => {
+      const list = {
+        id: historyId.current,
+        mathEx
+      };
+      setHistory(history.concat(list));
+      historyId.current += 1;
+    }, [history]
+  );
+
   return(
     <>
     <Button btnState={btnState} onClick={onClick}/>
-    <CalcTemplate typeKeypads={typeKeypads} isLogged={type.current}/>
+    <CalcTemplate typeKeypads={typeKeypads} typeChk={type.current} wrhist={wrhist}/>
+    <HistoryList mathHistory={history}/>
     </>
   )
 }

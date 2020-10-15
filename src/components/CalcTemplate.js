@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useReducer } from 'react';
+import React, { useEffect, useRef, useReducer, useCallback } from 'react';
 import './CalcStyle.scss';
 import * as Utils from './common/Utils';
 
@@ -6,22 +6,9 @@ import * as Utils from './common/Utils';
 // const signArray   = [];
 const mathArray   = [];
 
-const CalcTemplate = ({typeKeypads, isLogged}) => {
-  useEffect(()=>{
-    const keyPressHandler = e => {
-      const keyType = pressKeyChk(e.key);
-      if(keyType==='number' || keyType==='zero' || keyType==='dot'){
-        numKeypadClick(keyType, e.key);
-      }
-      else if(keyType==='top'){
-        topKeypadClick(keyType, e.key);
-      }
-      else if(keyType==='sign' || keyType==='equal'){
-        signKeypadClick(keyType, e.key);
-      }
-    }
-    document.addEventListener('keypress', keyPressHandler);
-  },[]);
+
+
+const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
 
   const CalcReducer = (state, action) => {
     switch(action.type){
@@ -36,7 +23,6 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     }
   }
 
-  const [state, dispatch] = useReducer(CalcReducer, {mathEx:'', resultNum:0, answer:''});
   const paintMathEx = (val) => {
     dispatch({ type: 'PAINT_MATHEX', value: val });
   }
@@ -47,12 +33,29 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     dispatch({ type: 'PAINT_ANSWER', value: val });
   }
 
+  const [state, dispatch] = useReducer(CalcReducer, {mathEx:'', resultNum:0, answer:''});
+
   const mathEx = useRef(''); //입력중인 수식
   const resultNum = useRef(0); //현재 입력중인 숫자 값
   const completed = useRef(false);
 
+  const initValue = useCallback(() => {
+    mathArray.length=0;
+    mathEx.current='';
+    paintMathEx('');
+    paintAnswer('');
+  }, []);
+
+  //TODO:TEST!!!   
+  const listwrite = useCallback(val=> {
+    const finalMatheX = mathEx.current + '=' + val;
+    wrhist(finalMatheX);
+    //
+  }, [wrhist]);
+  //TODO:TEST!!!   
+
   /** 수식을 계산한다. */
-  const operator = () => {
+  const operator = useCallback(() => {
     let answer = 0;
 
     // 후위 계산식으로 변환
@@ -76,7 +79,6 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     //결과값이 정수인지 확인 후,
     //수식에 사용된 숫자들 소수점 자릿수 확인 -> answer에 toFixed 적용
     if(!Number.isInteger(answer) && answer !== undefined){
-      console.log(typeof answer);
       answer = Utils.checkDecimal(answer);
     }
 
@@ -86,11 +88,11 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     paintResult(answer);
     paintMathEx(mathEx.current);
     paintAnswer('='+answer);
+    listwrite(answer);
+  }, [listwrite]);
 
-  }
-      
   /** top key 클릭 이벤트 */
-  const topKeypadClick = (val) => {
+  const topKeypadClick = useCallback((val) => {
     if(val==='AC'){
       const clearBtn = document.querySelector('.TopKey').querySelector('.top').innerText;
       if(clearBtn==='C'){
@@ -103,6 +105,7 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
         resultNum.current = 0;
         mathEx.current = '';
         //TODO: 입력중인 수식에서 답 부분은 clear 되지 않음
+        //TODO: 이미 계산이 완료된 경우 ac 눌러도 mathEx의 답은 사라지지 않ㄴ음
       }
 
     }else if(val==='+/-'){
@@ -115,15 +118,16 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     paintMathEx(mathEx.current);
     paintResult(resultNum.current);
 
-  } 
+  }, []);
 
   /** 연산자(sign) key 클릭 이벤트 */
-  const signKeypadClick = (type, val) => {
+  const signKeypadClick = useCallback((type, val) => {
     if(type==='sign'){
-      if(!completed.current){ 
-        //numberArray.push(resultNum.current); 
-        mathArray.push(resultNum.current);
-      }
+      // if(!completed.current){ //ㅠㅠ
+      //   //numberArray.push(resultNum.current); 
+      //   mathArray.push(resultNum.current);
+      // }
+      mathArray.push(resultNum.current);
       completed.current = false;
       mathEx.current += resultNum.current+val;
       
@@ -155,10 +159,14 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
       operator();
     }
 
-  }
+  }, [operator]);
 
   /** 숫자 key 클릭 이벤트 */
-  const numKeypadClick = (type, val) => {
+  const numKeypadClick = useCallback((type, val) => {
+    //FIXME
+    if(completed.current){
+      initValue();
+    }
     if(type==='number' || type==='zero' ){
       resultNum.current = parseFloat(resultNum.current+val+'');
 
@@ -173,9 +181,9 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
     }
 
     paintResult(resultNum.current);
-  }
+  }, [initValue]);
 
-  function pressKeyChk(val) {
+  const pressKeyChk = useCallback((val) => {
     let targetType;
     typeKeypads.forEach(keypad=>{
       keypad.forEach(key=>{
@@ -183,9 +191,31 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
           targetType = key.keytype;
         }
       })
-    })
+    });
+    if(val==='Enter'){
+      targetType='equal';
+    }
     return targetType;
-  }
+  }, [typeKeypads]);
+
+
+  const keyPressHandler = useCallback(e => {
+    const keyType = pressKeyChk(e.key);
+    if(keyType==='number' || keyType==='zero' || keyType==='dot'){
+      numKeypadClick(keyType, e.key);
+    }
+    else if(keyType==='top'){
+      topKeypadClick(keyType, e.key);
+    }
+    else if(keyType==='sign' || keyType==='equal'){
+      signKeypadClick(keyType, e.key);
+    }
+  }, [numKeypadClick, pressKeyChk, signKeypadClick, topKeypadClick]);
+
+  useEffect(()=>{
+    window.addEventListener('keypress', keyPressHandler);
+    return ()=> window.removeEventListener('keypress', keyPressHandler);
+  },[keyPressHandler]);
 
   return(
     <>
@@ -195,7 +225,7 @@ const CalcTemplate = ({typeKeypads, isLogged}) => {
         {state.resultNum}
       </div>
       <div className="CalcNumBlcok">
-        {isLogged==='engineering' &&
+        {typeChk==='engineering' &&
           <div className="EngnWrap">
             {typeKeypads[3].map(keypad=>(
               <div key={keypad.id} className={'CalcNumKey '+keypad.keytype} onClick={()=>alert('현재 공학용 계산기는 사용하실 수 없습니다.')}>
