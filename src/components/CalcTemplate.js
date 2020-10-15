@@ -6,8 +6,6 @@ import * as Utils from './common/Utils';
 // const signArray   = [];
 const mathArray   = [];
 
-
-
 const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
 
   const CalcReducer = (state, action) => {
@@ -41,8 +39,8 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
 
   const initValue = useCallback(() => {
     resultNum.current = 0;
-    mathArray.length=0;
     mathEx.current='';
+    mathArray.length=0;
     paintMathEx('');
     paintAnswer('');
   }, []);
@@ -123,23 +121,20 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
   /** 연산자(sign) key 클릭 이벤트 */
   const signKeypadClick = useCallback((type, val) => {
     if(type==='sign'){
-      // if(!completed.current){ //ㅠㅠ
-      //   //numberArray.push(resultNum.current); 
-      //   mathArray.push(resultNum.current);
-      // }
-      mathArray.push(resultNum.current);
+      if(!completed.current){
+        mathArray.push(resultNum.current);
+      }
       completed.current = false;
       mathEx.current += resultNum.current+val;
       
       // signArray.push(val);
       mathArray.push(val);
-      
+
       resultNum.current = 0;
       paintMathEx(mathEx.current);
 
-      //TODO: 연산자가 연속해서 눌리는 경우?
-
     }else if(type==='equal'){
+      console.dir(mathArray);
       if(completed.current){
         alert('사용할 수 없습니다.');
         return;
