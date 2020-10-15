@@ -118,7 +118,7 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
     paintMathEx(mathEx.current);
     paintResult(resultNum.current);
 
-  }, []);
+  }, [initValue]);
 
   /** 연산자(sign) key 클릭 이벤트 */
   const signKeypadClick = useCallback((type, val) => {
@@ -163,7 +163,6 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
 
   /** 숫자 key 클릭 이벤트 */
   const numKeypadClick = useCallback((type, val) => {
-    //FIXME
     if(completed.current){
       initValue();
     }
@@ -179,7 +178,6 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
         resultNum.current += '.';
       }
     }
-
     paintResult(resultNum.current);
   }, [initValue]);
 
