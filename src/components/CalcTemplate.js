@@ -40,19 +40,26 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
   const completed = useRef(false);
 
   const initValue = useCallback(() => {
+    resultNum.current = 0;
     mathArray.length=0;
     mathEx.current='';
     paintMathEx('');
     paintAnswer('');
   }, []);
 
-  //TODO:TEST!!!   
-  const listwrite = useCallback(val=> {
+  const paintValue = useCallback(val=> {
+    completed.current = true;
+    resultNum.current = '';
+    paintResult(val);
+    paintMathEx(mathEx.current);
+    paintAnswer('='+val);
+  },[])
+
+  const mathListwrite = useCallback(val=> {
     const finalMatheX = mathEx.current + '=' + val;
     wrhist(finalMatheX);
     //
   }, [wrhist]);
-  //TODO:TEST!!!   
 
   /** 수식을 계산한다. */
   const operator = useCallback(() => {
@@ -81,15 +88,11 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
     if(!Number.isInteger(answer) && answer !== undefined){
       answer = Utils.checkDecimal(answer);
     }
-
-    completed.current = true;
-    resultNum.current = '';
-
-    paintResult(answer);
-    paintMathEx(mathEx.current);
-    paintAnswer('='+answer);
-    listwrite(answer);
-  }, [listwrite]);
+    
+    paintValue(answer);
+    mathListwrite(answer);
+    
+  }, [paintValue, mathListwrite]);
 
   /** top key 클릭 이벤트 */
   const topKeypadClick = useCallback((val) => {
@@ -102,10 +105,7 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
 
       }else if(clearBtn==='AC'){
         //모든 계산식, 결과값 초기화
-        resultNum.current = 0;
-        mathEx.current = '';
-        //TODO: 입력중인 수식에서 답 부분은 clear 되지 않음
-        //TODO: 이미 계산이 완료된 경우 ac 눌러도 mathEx의 답은 사라지지 않ㄴ음
+        initValue();
       }
 
     }else if(val==='+/-'){
