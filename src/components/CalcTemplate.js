@@ -41,6 +41,7 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
     resultNum.current = 0;
     mathEx.current='';
     mathArray.length=0;
+    completed.current=false;
     paintMathEx('');
     paintAnswer('');
   }, []);
@@ -62,7 +63,7 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
   /** 수식을 계산한다. */
   const operator = useCallback(() => {
     let answer = 0;
-
+    
     // 후위 계산식으로 변환
     // 괄호없이 기본 사칙연산 순서대로 진행하는 것으로 한다.
     const postfixMathEx = Utils.postfixCalc(mathArray);
@@ -86,7 +87,6 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
     if(!Number.isInteger(answer) && answer !== undefined){
       answer = Utils.checkDecimal(answer);
     }
-    
     paintValue(answer);
     mathListwrite(answer);
     
@@ -121,33 +121,32 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
   /** 연산자(sign) key 클릭 이벤트 */
   const signKeypadClick = useCallback((type, val) => {
     if(type==='sign'){
+      if(val==='*'){val = 'x'}
+      else if(val==='/'){val = '÷'};
+
       if(!completed.current){
         mathArray.push(resultNum.current);
       }
       completed.current = false;
       mathEx.current += resultNum.current+val;
-      
-      // signArray.push(val);
       mathArray.push(val);
-
       resultNum.current = 0;
       paintMathEx(mathEx.current);
 
     }else if(type==='equal'){
-      console.dir(mathArray);
       if(completed.current){
-        alert('사용할 수 없습니다.');
-        return;
         //직전 수식을 반복한다.
-        // resultNum.current = numberArray[numberArray.length-1];
-        // mathEx.current += signArray[signArray.length-1];
-        // signArray.push(signArray[signArray.length-1]);
+        const prevSign = mathArray[mathArray.length-2];
+        const prevNum = mathArray[mathArray.length-1];
+        mathEx.current += prevSign + prevNum;
+        mathArray.push(prevSign);
+        mathArray.push(prevNum);
+      }
+      else {
+        mathArray.push(resultNum.current);
+        mathEx.current += resultNum.current;
       }
 
-      // numberArray.push(resultNum.current);
-      mathArray.push(resultNum.current);
-
-      mathEx.current += resultNum.current;
       paintMathEx(mathEx.current);
       
       //계산 실행
@@ -187,6 +186,8 @@ const CalcTemplate = ({typeKeypads, typeChk, wrhist}) => {
     });
     if(val==='Enter'){
       targetType='equal';
+    }else if(val==='*'){
+      targetType='sign';
     }
     return targetType;
   }, [typeKeypads]);
